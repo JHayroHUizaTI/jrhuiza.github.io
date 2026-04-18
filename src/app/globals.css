@@ -1,0 +1,370 @@
+@import "tailwindcss" source(none);
+@source "../";
+
+@theme {
+  --color-primary: #39FF14;
+  --color-secondary: #25C5C5;
+  --color-background: #030a05;
+  --color-on-surface: #e5e2e1;
+  --color-primary-container: #39ff14;
+
+  --font-headline: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+  --font-label: var(--font-jetbrains-mono), monospace;
+
+  --animate-hero-gradient: hero-gradient 8s ease-in-out infinite;
+
+  @keyframes hero-gradient {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  min-height: 100%;
+  background-color: #030a05;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  background-color: transparent;
+  color: var(--color-on-surface);
+  overflow-x: hidden;
+}
+
+@layer utilities {
+  .text-hero-gradient {
+    color: transparent;
+    background-image: linear-gradient(
+      100deg,
+      #39ff14 0%,
+      #a7ff9b 24%,
+      #63ffd1 44%,
+      #25c5c5 58%,
+      #d8ffe1 72%,
+      #39ff14 100%
+    );
+    background-size: 220% 100%;
+    background-position: 0% 50%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: var(--animate-hero-gradient);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-hero-gradient {
+      animation: none;
+      background-position: 55% 50%;
+    }
+  }
+}
+
+/* ============================================================
+   Material Symbols
+   ============================================================ */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ============================================================
+   Section Header Shell – glassmorphism variant
+   ============================================================ */
+.section-header-shell {
+  position: relative;
+  padding: 1.2rem 0.9rem 0;
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 42% 45%, rgba(57, 255, 20, 0.1), transparent 30%),
+    radial-gradient(circle at 72% 0%, rgba(57, 255, 20, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(4, 16, 8, 0.7), rgba(3, 10, 5, 0.5));
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  border: 1px solid rgba(57, 255, 20, 0.06);
+  overflow: hidden;
+}
+
+.section-header-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(57, 255, 20, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.section-header-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(57, 255, 20, 0.06);
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(57, 255, 20, 0.04);
+  pointer-events: none;
+}
+
+.section-header-line {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 1.25rem;
+}
+
+.section-header-label {
+  color: #39ff14;
+  font-family: var(--font-label);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.22);
+}
+
+.section-header-divider {
+  position: relative;
+  display: block;
+  flex: 1;
+  height: 1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(57, 255, 20, 0.45), rgba(37, 197, 197, 0.2), transparent);
+}
+
+/* ============================================================
+   Glassmorphism Card Base
+   ============================================================ */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(57, 255, 20, 0.08);
+  background: rgba(4, 16, 8, 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 1px 0 rgba(57, 255, 20, 0.05) inset;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(57, 255, 20, 0.18);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(57, 255, 20, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 rgba(57, 255, 20, 0.08) inset;
+  transform: translateY(-2px);
+}
+
+/* Lighter variant for inner cards */
+.glass-card-inner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(57, 255, 20, 0.06);
+  background: rgba(4, 16, 8, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease;
+}
+
+.glass-card-inner:hover {
+  border-color: rgba(57, 255, 20, 0.15);
+}
+
+/* ============================================================
+   Glass Panel (reusable outside component)
+   ============================================================ */
+.glass-panel {
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  background: rgba(4, 16, 8, 0.44);
+  border: 1px solid rgba(57, 255, 20, 0.09);
+  border-radius: 1rem;
+}
+
+/* ============================================================
+   Dashboard card hover – glassmorphism variant
+   ============================================================ */
+.dashboard-card-hover {
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+  will-change: transform, box-shadow;
+}
+
+.dashboard-card-hover:hover {
+  transform: scale(1.015);
+  border-color: rgba(57, 255, 20, 0.2);
+  box-shadow:
+    0 0 0 1px rgba(57, 255, 20, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   Neon glow utility
+   ============================================================ */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+}
+
+/* ============================================================
+   Terminal cursor
+   ============================================================ */
+.terminal-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 0.56ch;
+  height: 1.08em;
+  margin-left: 0.24rem;
+  vertical-align: -0.18em;
+  background: #39ff14;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.45);
+  animation: blink 0.92s steps(1, end) infinite;
+}
+
+.terminal-cursor-real::after {
+  margin-left: 0;
+}
+
+.terminal-command-input {
+  caret-color: #39ff14;
+}
+
+.terminal-command-input:focus {
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.08);
+}
+
+.terminal-surface {
+  cursor: text;
+}
+
+.terminal-surface ::selection {
+  background: rgba(57, 255, 20, 0.22);
+  color: #e5e2e1;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-cursor::after {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Timeline – glassmorphism variant
+   ============================================================ */
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, #39ff14 20%, #25C5C5 80%, transparent 100%);
+  opacity: 0.2;
+}
+
+@media (max-width: 768px) {
+  .timeline-container::before {
+    left: 20px;
+  }
+}
+
+.timeline-card {
+  transition: all 0.3s ease;
+}
+
+.timeline-card:hover {
+  border-color: rgba(57, 255, 20, 0.25);
+}
+
+/* ============================================================
+   Project / Contact card hovers
+   ============================================================ */
+.project-card {
+  transition: all 0.3s ease;
+}
+
+.project-card:hover {
+  border-color: rgba(57, 255, 20, 0.25);
+}
+
+.contact-card {
+  transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+  background: rgba(57, 255, 20, 0.04);
+  border-color: rgba(57, 255, 20, 0.25);
+}
+
+/* ============================================================
+   Glassmorphism Hero – animaciones
+   ============================================================ */
+@keyframes glassFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glassFloatSlow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* ============================================================
+   Responsive tweaks
+   ============================================================ */
+@media (max-width: 768px) {
+  .section-header-shell {
+    padding: 1rem 0.75rem 0;
+  }
+
+  .section-header-line {
+    gap: 0.75rem;
+  }
+
+  .section-header-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+  }
+}
