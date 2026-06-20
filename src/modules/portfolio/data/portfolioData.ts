@@ -188,6 +188,16 @@ export const portfolioData: PortfolioData = {
         'Responsible for deploying, configuring, and maintaining secure and high-performing Linux environments (primarily Red Hat and Ubuntu). Skilled in managing core services such as web servers (Apache/Nginx), databases, DNS, and mail systems, ensuring high availability and reliability.',
       themeVariant: 'primary',
     },
+    {
+      id: 'Desarrollador Frontend & Backend — Freelance',
+      period: '2025 Jan — Present',
+      role: 'Desarrollador Frontend & Backend — Freelance',
+      company: 'Bistion',
+      location: 'Lima, Peru',
+      description:
+        'Developed modern, responsive web interfaces using React, Next.js, TypeScript, and Tailwind CSS, applying a reusable component architecture. Implemented backend services with Node.js and integrated REST APIs, connecting frontend and backend systems in a scalable and maintainable manner. Optimized performance, code structure, and user experience by applying development best practices and version control with Git. Collaborated on digital transformation solutions, delivering landing pages and corporate websites aligned with the clients business objectives.',
+      themeVariant: 'primary',
+    },
   ],
   education: [
     {
