@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { WhatsAppButton } from '@/shared/components/ui/WhatsAppButton';
+import { LanguageProvider } from '@/shared/i18n';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -31,19 +33,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="es" className="dark">
       <head>
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
+        {/* Without JS the scroll-reveal observer never runs — keep content visible. */}
+        <noscript>
+          <style>{`.reveal,.reveal .motion-stagger>*{opacity:1 !important;transform:none !important;}`}</style>
+        </noscript>
       </head>
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} font-body text-on-surface selection:bg-primary-container selection:text-on-primary antialiased`}
 
       >
-        {children}
+        <LanguageProvider>
+          {children}
+          <WhatsAppButton />
+        </LanguageProvider>
       </body>
     </html>
   );

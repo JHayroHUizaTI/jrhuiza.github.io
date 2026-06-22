@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { EducationItem, PortfolioData } from '../types';
 import { SectionHeader } from './SectionHeader';
+import { useLanguage } from '@/shared/i18n';
 
 interface EducationSectionProps {
   educationData: PortfolioData['education'];
@@ -50,7 +53,7 @@ const TimelineRail = ({ variant }: { variant: EducationItem['themeVariant'] }) =
     <div className="absolute bottom-0 left-0 top-0 flex w-10 justify-center md:w-14">
       <div className="w-px bg-gradient-to-b from-transparent via-secondary/35 to-transparent" />
       <div className={`absolute top-12 grid h-8 w-8 place-items-center rounded-full border ${accent.border} bg-background ${accent.shadow}`}>
-        <div className={`h-3 w-3 rounded-full ${accent.line}`} />
+        <div className={`timeline-pulse h-3 w-3 rounded-full ${accent.line}`} />
       </div>
     </div>
   );
@@ -91,22 +94,23 @@ const EducationIcon = ({ icon, variant }: { icon?: string; variant: EducationIte
   const accent = getAccent(variant);
 
   if (icon === 'redhat') {
-    return <RedHatLogo className="h-9 w-11 drop-shadow-[0_0_10px_rgba(224,0,0,0.5)]" />;
+    return <RedHatLogo className="icon-anim h-9 w-11 drop-shadow-[0_0_10px_rgba(224,0,0,0.5)]" />;
   }
 
-  return <span className={`material-symbols-outlined text-xl ${accent.text}`}>{icon ?? 'workspace_premium'}</span>;
+  return <span className={`material-symbols-outlined icon-anim text-xl ${accent.text}`}>{icon ?? 'workspace_premium'}</span>;
 };
 
 const MainEducationCard = ({ item }: { item: EducationItem }) => {
   const accent = getAccent(item.themeVariant);
+  const { t } = useLanguage();
 
   return (
-    <article className="relative ml-10 overflow-hidden rounded-lg border border-primary/10 bg-[rgba(4,16,8,0.62)] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.42)] backdrop-blur-xl md:ml-14 md:p-8">
+    <article className="group motion-surface relative ml-10 overflow-hidden rounded-lg border border-primary/10 bg-[rgba(4,16,8,0.62)] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.42)] backdrop-blur-xl md:ml-14 md:p-8">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-primary/60 via-secondary/35 to-transparent" />
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <div className={`mb-4 inline-flex items-center gap-2 rounded-md border px-3 py-1.5 font-label text-[10px] uppercase tracking-[0.2em] ${accent.border} ${accent.text}`}>
-            <span className="material-symbols-outlined text-[15px]">{item.icon ?? 'school'}</span>
+            <span className="material-symbols-outlined icon-anim text-[15px]">{item.icon ?? 'school'}</span>
             <span>{item.period}</span>
           </div>
           <h3 className="font-headline text-2xl font-bold leading-tight text-on-surface md:text-4xl">
@@ -120,8 +124,8 @@ const MainEducationCard = ({ item }: { item: EducationItem }) => {
           </p>
         </div>
         <div className="min-w-[12rem] rounded-lg border border-secondary/10 bg-secondary/5 p-4">
-          <p className="font-label text-[10px] uppercase tracking-[0.22em] text-zinc-600">Status</p>
-          <p className={`mt-2 font-label text-sm ${accent.text}`}>{item.status ?? 'Active learning'}</p>
+          <p className="font-label text-[10px] uppercase tracking-[0.22em] text-zinc-600">{t.education.status}</p>
+          <p className={`mt-2 font-label text-sm ${accent.text}`}>{item.status ?? t.education.activeLearning}</p>
         </div>
       </div>
       <div className="mt-7">
@@ -136,7 +140,7 @@ const CertificationCard = ({ item, compact = false }: EducationCardProps) => {
   const iconFrameSize = item.icon === 'redhat' ? 'h-12 w-12' : 'h-10 w-10';
 
   return (
-    <article className="rounded-lg border border-primary/10 bg-[rgba(4,16,8,0.48)] p-5 transition-colors duration-300 hover:border-primary/25 md:p-6">
+    <article className="group motion-surface rounded-lg border border-primary/10 bg-[rgba(4,16,8,0.48)] p-5 transition-colors duration-300 hover:border-primary/25 md:p-6">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div className={`grid ${iconFrameSize} shrink-0 place-items-center rounded-lg border ${accent.border} ${accent.softBg}`}>
           <EducationIcon icon={item.icon} variant={item.themeVariant} />
@@ -159,9 +163,9 @@ const TrainingItem = ({ item }: { item: EducationItem }) => {
   const accent = getAccent(item.themeVariant);
 
   return (
-    <li className="grid gap-4 rounded-lg border border-primary/10 bg-[rgba(3,10,5,0.42)] p-4 sm:grid-cols-[auto_1fr]">
+    <li className="group motion-surface grid gap-4 rounded-lg border border-primary/10 bg-[rgba(3,10,5,0.42)] p-4 sm:grid-cols-[auto_1fr]">
       <div className={`grid h-8 w-8 place-items-center rounded-full border ${accent.border} ${accent.softBg}`}>
-        <span className={`material-symbols-outlined text-base ${accent.text}`}>{item.icon ?? 'check_circle'}</span>
+        <span className={`material-symbols-outlined icon-anim text-base ${accent.text}`}>{item.icon ?? 'check_circle'}</span>
       </div>
       <div>
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
@@ -176,6 +180,7 @@ const TrainingItem = ({ item }: { item: EducationItem }) => {
 };
 
 export const EducationSection = ({ educationData }: EducationSectionProps) => {
+  const { t } = useLanguage();
   const academicItems = educationData.filter((item) => (item.kind ?? 'academic') === 'academic');
   const certifications = educationData.filter((item) => item.kind === 'certification');
   const trainings = educationData.filter((item) => item.kind === 'training');
@@ -190,8 +195,8 @@ export const EducationSection = ({ educationData }: EducationSectionProps) => {
       <div className="relative z-10 mx-auto max-w-7xl">
         <SectionHeader
           label="/education"
-          title="Education"
-          subtitle="Formal studies, certifications, and focused training mapped like a compact operator timeline."
+          title={t.education.title}
+          subtitle={t.education.subtitle}
         />
 
         <div className="relative">
@@ -202,10 +207,10 @@ export const EducationSection = ({ educationData }: EducationSectionProps) => {
         {certifications.length > 0 ? (
           <div className="mt-12 md:ml-14">
             <div className="mb-5 flex items-center gap-4">
-              <h3 className="font-headline text-xl font-bold text-on-surface md:text-2xl">Professional Certifications</h3>
+              <h3 className="font-headline text-xl font-bold text-on-surface md:text-2xl">{t.education.certifications}</h3>
               <span className="h-px flex-1 bg-gradient-to-r from-primary/30 via-secondary/20 to-transparent" />
             </div>
-            <div className="grid gap-5 lg:grid-cols-2">
+          <div className="motion-stagger grid gap-5 lg:grid-cols-2">
               {certifications.map((item) => (
                 <CertificationCard key={item.id} item={item} />
               ))}
@@ -216,10 +221,10 @@ export const EducationSection = ({ educationData }: EducationSectionProps) => {
         {trainings.length > 0 ? (
           <div className="mt-12 md:ml-14">
             <div className="mb-5 flex items-center gap-4">
-              <h3 className="font-headline text-xl font-bold text-primary md:text-2xl">Additional Training</h3>
+              <h3 className="font-headline text-xl font-bold text-primary md:text-2xl">{t.education.training}</h3>
               <span className="h-px flex-1 bg-gradient-to-r from-primary/30 via-secondary/20 to-transparent" />
             </div>
-            <ul className="grid gap-4 lg:grid-cols-2">
+            <ul className="motion-stagger grid gap-4 lg:grid-cols-2">
               {trainings.map((item) => (
                 <TrainingItem key={item.id} item={item} />
               ))}

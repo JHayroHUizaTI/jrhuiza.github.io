@@ -271,11 +271,11 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [
     {
-      id: 'kubearmor',
-      title: 'Pokémon E-Commerce Platform | Construido con Next.js',
-      description: 'e desarrollado un E-commerce de Pokémon construido íntegramente con Next.js. En este proyecto integré la PokéAPI para crear un catálogo dinámico completo y desarrollé toda la lógica de un carrito de compras funcional. Una excelente experiencia aplicando renderizado optimizado (SSR/SSG), consumo de APIs REST y gestión de estados complejos en React. Puedes ver el código y la arquitectura aquí',
-      icon: 'shopping_cart',
-      tags: ['NextJs', 'Typescript', 'Tailwindcss', 'shadcn/ui'],
+      id: 'bistion',
+      title: 'plataforma bistion | Construido con Next.js',
+      description: 'Bistion es una firma de ingeniería y consultoría de software orientada a la transformación digital de negocios en sectores como fintech, retail y EdTech. Su propuesta combina criterio de negocio con desarrollo técnico avanzado a través de soluciones clave como: aplicaciones web escalables, agentes de IA y chatbots conversacionales, implementaciones de ERP (Odoo) y CRM (Kommo). Trabajan bajo una metodología estructurada que abarca desde la fase de análisis inicial (Discovery) y diseño UX/UI, hasta el desarrollo y despliegue del producto.',
+      icon: 'code_slash',
+      tags: ['NextJs', 'Typescript', 'Tailwindcss', 'shadcn/ui', 'AI', 'Chatbots', 'ERP', 'CRM'],
       themeVariant: 'primary',
     },
     {

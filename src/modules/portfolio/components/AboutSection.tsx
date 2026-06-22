@@ -51,9 +51,9 @@ export const AboutSection = ({
   return (
     <section className="pt-16 pb-12 px-8 max-w-7xl mx-auto" id="about">
       <SectionHeader label="/about" />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)_auto]">
+      <div className="motion-stagger grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)_auto]">
         {/* Profile card */}
-        <div className="glass-card lg:row-span-2">
+        <div className="glass-card motion-surface lg:row-span-2">
           <div
             className="relative flex items-center justify-between px-5 py-3"
             style={{
@@ -86,7 +86,7 @@ export const AboutSection = ({
             </div>
 
             {/* Profile image */}
-            <div className="glass-card-inner mb-8 p-6">
+            <div className="glass-card-inner motion-surface mb-8 p-6">
               <div
                 className="mx-auto aspect-square w-full max-w-[220px] overflow-hidden rounded-[1.4rem] p-3"
                 style={{
@@ -117,7 +117,7 @@ export const AboutSection = ({
               {operatorDetails.map((detail) => (
                 <div
                   key={detail.label}
-                  className="glass-card-inner flex items-center justify-between px-4 py-3"
+                  className="glass-card-inner motion-surface flex items-center justify-between px-4 py-3"
                 >
                   <span
                     className="font-label text-[10px] uppercase tracking-[0.25em] text-[#39FF14]"
@@ -151,7 +151,7 @@ export const AboutSection = ({
         </div>
 
         {/* Background JSON panel */}
-        <div className="glass-card">
+        <div className="glass-card motion-surface">
           <div
             className="relative flex items-center justify-between px-4 pt-2"
             style={{
@@ -245,10 +245,10 @@ export const AboutSection = ({
           {statsData.slice(0, 4).map((stat) => (
             <div
               key={stat.label}
-              className="glass-card-inner flex items-center gap-4 p-4"
+              className="group glass-card-inner motion-surface flex items-center gap-4 p-4"
             >
               {stat.icon && (
-                <span className="material-symbols-outlined text-xl text-[#39ff14]">
+                <span className="material-symbols-outlined icon-anim text-xl text-[#39ff14]">
                   {stat.icon}
                 </span>
               )}

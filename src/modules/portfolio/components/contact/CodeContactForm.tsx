@@ -11,6 +11,7 @@ import {
   ContactSubmissionPort,
 } from '../../services/contactSubmissionService';
 import { CodeEditorShell } from './CodeEditorShell';
+import { useLanguage } from '@/shared/i18n';
 
 type SubmitState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -28,6 +29,7 @@ const codeFieldBaseClass =
   'inline-flex h-8 min-w-[11rem] items-center border-b border-[rgba(57,255,20,0.12)] bg-transparent px-1 text-on-surface/80 outline-none transition-colors placeholder:text-on-surface/25 focus:border-secondary disabled:cursor-not-allowed disabled:opacity-60';
 
 export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => {
+  const { t } = useLanguage();
   const service = useMemo(
     () => submissionService ?? new ContactApiSubmissionService(),
     [submissionService],
@@ -61,23 +63,21 @@ export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => 
 
     if (!validation.isValid) {
       setSubmitState('error');
-      setStatusMessage('Revisa los campos antes de ejecutar el script.');
+      setStatusMessage(t.contact.checkFields);
       return;
     }
 
     try {
       setSubmitState('loading');
-      setStatusMessage('Enviando mensaje...');
+      setStatusMessage(t.contact.sending);
       await service.send(validation.data);
       setMessage(emptyMessage);
       setSubmitState('success');
-      setStatusMessage('Mensaje enviado correctamente.');
+      setStatusMessage(t.contact.sent);
     } catch (error) {
       setSubmitState('error');
       setStatusMessage(
-        error instanceof Error
-          ? error.message
-          : 'No se pudo enviar el mensaje. Intentalo nuevamente.',
+        error instanceof Error ? error.message : t.contact.sendError,
       );
     }
   };
@@ -120,7 +120,7 @@ export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => 
               id="contact-name"
               name="name"
               onChange={(event) => updateField('name', event.target.value)}
-              placeholder="Your Name"
+              placeholder={t.contact.namePlaceholder}
               value={message.name}
             />
             <span className="text-on-surface/70">{'"'}</span>
@@ -145,7 +145,7 @@ export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => 
               id="contact-email"
               name="email"
               onChange={(event) => updateField('email', event.target.value)}
-              placeholder="your@email.com"
+              placeholder={t.contact.emailPlaceholder}
               type="email"
               value={message.email}
             />
@@ -186,7 +186,7 @@ export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => 
                 id="contact-message"
                 name="message"
                 onChange={(event) => updateField('message', event.target.value)}
-                placeholder="Type your message here..."
+                placeholder={t.contact.messagePlaceholder}
                 value={message.message}
               />
               {errors.message ? (
@@ -212,7 +212,7 @@ export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => 
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button
-            className="inline-flex w-full items-center justify-center gap-3 rounded-md px-5 py-3 font-label text-xs font-semibold tracking-[0.16em] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
+            className="group motion-button inline-flex w-full items-center justify-center gap-3 rounded-md px-5 py-3 font-label text-xs font-semibold tracking-[0.16em] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
             disabled={isLoading}
             type="submit"
             style={{
@@ -234,8 +234,8 @@ export const CodeContactForm = ({ submissionService }: CodeContactFormProps) => 
               e.currentTarget.style.boxShadow = '0 0 0 rgba(57, 255, 20, 0)';
             }}
           >
-            <span aria-hidden="true" className="text-sm">{isLoading ? '...' : '>'}</span>
-            <span>{isLoading ? 'RUNNING' : 'RUN SCRIPT'}</span>
+            <span aria-hidden="true" className="icon-anim text-sm">{isLoading ? '...' : '>'}</span>
+            <span>{isLoading ? t.contact.running : t.contact.runScript}</span>
           </button>
 
           {statusMessage ? (

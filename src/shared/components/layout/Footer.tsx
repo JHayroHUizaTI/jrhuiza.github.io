@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/shared/i18n';
 
 interface FooterProps {
   authorName?: string;
@@ -10,9 +11,10 @@ interface FooterProps {
 
 export const Footer = ({
   authorName = 'Jhayro',
-  githubUrl = 'https://github.com/jhayro',
+  githubUrl = 'https://github.com/JHayroHUizaTI',
   year = 2026,
 }: FooterProps) => {
+  const { t } = useLanguage();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -50,15 +52,15 @@ export const Footer = ({
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-4 px-8 py-12 text-center md:py-16">
         <p className="max-w-lg text-[11px] leading-relaxed text-zinc-600">
-          Built with modern web technologies and a focus on clean and performant code
+          {t.footer.tagline}
         </p>
 
         <p className="text-sm text-zinc-400">
-          Made with{' '}
+          {t.footer.madeWith}{' '}
           <span role="img" aria-label="love">❤️</span>
-          {' '}and{' '}
+          {' '}{t.footer.and}{' '}
           <span role="img" aria-label="coffee">☕</span>
-          {' '}by {authorName}
+          {' '}{t.footer.by} {authorName}
         </p>
 
         <nav aria-label="Footer navigation" className="flex items-center gap-3">
@@ -66,22 +68,28 @@ export const Footer = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[12px] text-zinc-500 transition-colors duration-200 hover:text-[#39ff14]"
+            className="group motion-link inline-flex items-center gap-1.5 text-[12px] text-zinc-500 transition-colors duration-200 hover:text-[#39ff14]"
           >
+            <span aria-hidden="true" className="material-symbols-outlined icon-anim text-[15px]">
+              code
+            </span>
             GitHub
           </a>
           <span aria-hidden="true" className="select-none text-zinc-700">•</span>
           <button
             onClick={scrollToTop}
-            aria-label="Scroll to top of page"
-            className="text-[12px] text-zinc-500 transition-colors duration-200 hover:text-[#39ff14]"
+            aria-label={t.footer.scrollTop}
+            className="group motion-link inline-flex items-center gap-1.5 text-[12px] text-zinc-500 transition-colors duration-200 hover:text-[#39ff14]"
           >
-            Scroll to top
+            <span aria-hidden="true" className="material-symbols-outlined icon-anim-bounce text-[15px]">
+              keyboard_double_arrow_up
+            </span>
+            {t.footer.scrollTop}
           </button>
         </nav>
 
         <p className="text-[11px] text-zinc-700">
-          © {year} <span aria-hidden="true">•</span> All rights reserved
+          © {year} <span aria-hidden="true">•</span> {t.footer.rights}
         </p>
       </div>
     </footer>

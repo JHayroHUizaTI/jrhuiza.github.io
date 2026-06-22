@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { ExperienceItem, PortfolioData } from '../types';
 import { SectionHeader } from './SectionHeader';
+import { useLanguage } from '@/shared/i18n';
 
 // ────────────────────────────────────────────────────
 // Domain helpers
@@ -29,8 +32,8 @@ interface MetadataBadgeProps {
  * Used for date and location indicators beside each experience entry.
  */
 const MetadataBadge = ({ icon, label }: MetadataBadgeProps) => (
-  <span className="inline-flex items-center gap-1.5 text-zinc-500 text-[13px]">
-    <span className="material-symbols-outlined text-[15px] text-zinc-600">{icon}</span>
+  <span className="group inline-flex items-center gap-1.5 text-zinc-500 text-[13px]">
+    <span className="material-symbols-outlined icon-anim text-[15px] text-zinc-600">{icon}</span>
     {label}
   </span>
 );
@@ -43,7 +46,7 @@ const MetadataBadge = ({ icon, label }: MetadataBadgeProps) => (
 const TimelineNode = ({ isLast }: TimelineNodeProps) => (
   <div className="relative flex flex-col items-center" aria-hidden="true">
     {/* Accent dot */}
-    <div className="relative z-10 h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(57,255,20,0.55),0_0_30px_rgba(57,255,20,0.2)]" />
+    <div className="timeline-pulse relative z-10 h-3 w-3 rounded-full bg-primary shadow-[0_0_10px_rgba(57,255,20,0.55),0_0_30px_rgba(57,255,20,0.2)]" />
     {/* Connecting rail – hidden on last item */}
     {!isLast && (
       <div className="w-px flex-1 bg-gradient-to-b from-primary/30 via-primary/10 to-transparent" />
@@ -57,7 +60,7 @@ const TimelineNode = ({ isLast }: TimelineNodeProps) => (
  * Matches the reference image's left-aligned timeline card pattern.
  */
 const ExperienceCard = ({ item }: ExperienceCardProps) => (
-  <article className="pb-10 last:pb-0 group">
+  <article className="group pb-10 transition-transform duration-300 hover:translate-x-1 last:pb-0">
     {/* Role / Title */}
     <h3 className="font-headline text-[18px] md:text-xl font-bold text-on-surface leading-tight tracking-tight">
       {item.role}
@@ -98,14 +101,16 @@ interface ExperienceSectionProps {
  * - Fully responsive: rail shifts to edge on mobile
  */
 export const ExperienceSection = ({ experienceData }: ExperienceSectionProps) => {
+  const { t } = useLanguage();
+
   if (!experienceData.length) return null;
 
   return (
     <section className="relative overflow-hidden py-16 px-8 max-w-7xl mx-auto" id="work">
-        <SectionHeader label="/work_experience" title="Experience" />
+        <SectionHeader label="/work_experience" title={t.experience.title} />
 
         {/* Timeline grid: rail column + content column */}
-        <div className="mt-10 grid grid-cols-[20px_1fr] md:grid-cols-[28px_1fr] gap-x-5 md:gap-x-8">
+        <div className="motion-stagger mt-10 grid grid-cols-[20px_1fr] md:grid-cols-[28px_1fr] gap-x-5 md:gap-x-8">
           {experienceData.map((exp, idx) => (
             <React.Fragment key={exp.id}>
               {/* Rail + node */}

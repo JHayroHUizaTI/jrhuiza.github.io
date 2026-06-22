@@ -26,7 +26,7 @@ export const CodeEditorShell = ({
 
   return (
     <div
-      className={`glass-card group ${className}`}
+      className={`glass-card group motion-surface ${className}`}
       style={{
         // Override glass-card with a thin top highlight
         boxShadow: [

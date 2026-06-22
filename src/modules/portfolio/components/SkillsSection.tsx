@@ -1,6 +1,9 @@
+'use client';
+
 import { PortfolioData, SkillAccent, SkillCategory, SkillItem } from '../types';
 import { SectionHeader } from './SectionHeader';
 import { SkillProgressBar } from './SkillProgressBar';
+import { useLanguage } from '@/shared/i18n';
 
 type AccentTheme = {
   iconBg: string;
@@ -38,9 +41,9 @@ const ACCENT_THEME: Record<SkillAccent, AccentTheme> = {
 const DEFAULT_ACCENT: SkillAccent = 'green';
 
 const SkillBadge = ({ skill }: { skill: SkillItem }) => (
-  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-[12px] font-medium text-zinc-300 transition-colors hover:border-white/15 hover:bg-white/[0.06]">
+  <span className="group motion-link inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-[12px] font-medium text-zinc-300 transition-colors hover:border-white/15 hover:bg-white/[0.06]">
     {skill.materialIcon ? (
-      <span className="material-symbols-outlined text-[14px] leading-none text-zinc-400">
+      <span className="material-symbols-outlined icon-anim text-[14px] leading-none text-zinc-400">
         {skill.materialIcon}
       </span>
     ) : null}
@@ -54,13 +57,13 @@ const SkillCard = ({ category }: { category: SkillCategory }) => {
 
   return (
     <article
-      className={`group relative flex h-full flex-col rounded-2xl border border-white/[0.06] bg-[#0d1424] p-7 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_20px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:border-white/10 ${theme.glow}`}
+      className={`group motion-surface relative flex h-full flex-col rounded-2xl border border-white/[0.06] bg-[#0d1424] p-7 shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_20px_40px_-20px_rgba(0,0,0,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:border-white/10 ${theme.glow}`}
     >
       <header className="flex items-start gap-4">
         <div
           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${theme.iconBg} shadow-lg shadow-black/30`}
         >
-          <span className="material-symbols-outlined text-[26px] text-white">
+          <span className="material-symbols-outlined icon-anim text-[26px] text-white">
             {category.icon ?? 'category'}
           </span>
         </div>
@@ -95,14 +98,15 @@ const SkillCard = ({ category }: { category: SkillCategory }) => {
 
 // Skills section – card grid replicating the reference layout.
 export const SkillsSection = ({ skillsData }: { skillsData: PortfolioData['skills'] }) => {
+  const { t } = useLanguage();
   return (
     <section className="mx-auto max-w-7xl px-8 py-16" id="skills">
       <SectionHeader
         label="/skills"
-        title="Skills Tree"
-        subtitle="Tools & Technologies I Can Work With"
+        title={t.skills.title}
+        subtitle={t.skills.subtitle}
       />
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="motion-stagger grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {skillsData.map((category) => (
           <SkillCard key={category.id} category={category} />
         ))}

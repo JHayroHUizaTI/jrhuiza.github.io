@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { PortfolioData } from '../types';
+import { useLanguage } from '@/shared/i18n';
 
 const NEON_GREEN = '#39FF14';
 const NEON_BLUE = '#25C5C5';
@@ -23,9 +24,9 @@ const splitSummary = (text: string) => {
   };
 };
 
-const AvailabilityBadge = () => (
+const AvailabilityBadge = ({ label }: { label: string }) => (
   <div
-    className="inline-flex items-center gap-3 rounded-full px-4 py-2 font-label text-[11px] font-medium uppercase tracking-[0.32em] text-zinc-300"
+    className="group inline-flex items-center gap-3 rounded-full px-4 py-2 font-label text-[11px] font-medium uppercase tracking-[0.32em] text-zinc-300"
     style={{
       border: `1px solid ${NEON_GREEN}33`,
       background: 'rgba(5, 7, 10, 0.7)',
@@ -43,7 +44,7 @@ const AvailabilityBadge = () => (
         style={{ background: NEON_GREEN, boxShadow: `0 0 8px ${NEON_GREEN}` }}
       />
     </span>
-    Available for projects
+    {label}
   </div>
 );
 
@@ -56,7 +57,7 @@ const ActionButton = ({
 }) => (
   <a
     href={href}
-    className="group inline-flex items-center justify-center gap-2 rounded-md px-6 py-3.5 font-label text-sm font-semibold transition-all duration-150 ease-out hover:-translate-y-0.5"
+    className="group motion-button inline-flex items-center justify-center gap-2 rounded-md px-6 py-3.5 font-label text-sm font-semibold transition-all duration-150 ease-out hover:-translate-y-0.5"
     style={{
       border: `1px solid ${NEON_GREEN}66`,
       background: NEON_GREEN,
@@ -73,7 +74,7 @@ const ActionButton = ({
     }}
   >
     {children}
-    <span className="transition-transform duration-150 group-hover:translate-x-0.5">
+    <span className="icon-anim transition-transform duration-150 group-hover:translate-x-0.5">
       →
     </span>
   </a>
@@ -90,7 +91,7 @@ const OutlineButton = ({
     href={href}
     target={href.startsWith('http') ? '_blank' : undefined}
     rel={href.startsWith('http') ? 'noreferrer' : undefined}
-    className="inline-flex items-center justify-center rounded-md px-6 py-3.5 font-label text-sm font-medium text-zinc-100 transition-all duration-150 ease-out hover:-translate-y-0.5"
+    className="motion-button inline-flex items-center justify-center rounded-md px-6 py-3.5 font-label text-sm font-medium text-zinc-100 transition-all duration-150 ease-out hover:-translate-y-0.5"
     style={{
       border: '1px solid rgba(255, 255, 255, 0.1)',
       background: 'rgba(11, 15, 20, 0.6)',
@@ -114,6 +115,7 @@ export const HeroSection = ({
 }: {
   heroData: PortfolioData['hero'];
 }) => {
+  const { t } = useLanguage();
   const developerName = heroData.promptUser || 'Jhayro Huiza';
   const summary =
     heroData.summary ||
@@ -165,7 +167,7 @@ export const HeroSection = ({
       <div className="relative mx-auto max-w-6xl">
         <header className="hero-fade flex flex-col gap-10 sm:gap-12">
           <div style={{ animationDelay: '0ms' }}>
-            <AvailabilityBadge />
+            <AvailabilityBadge label={t.hero.available} />
           </div>
 
           <div className="flex flex-col gap-6 sm:gap-8">
@@ -174,7 +176,7 @@ export const HeroSection = ({
                 className="block text-4xl font-light italic leading-[1.05] text-zinc-200 sm:text-5xl lg:text-6xl"
                 style={{ letterSpacing: '-0.01em' }}
               >
-                Hello, I&apos;m
+                {t.hero.greeting}
               </span>
               <span
                 className="text-hero-gradient mt-3 block max-w-full py-2 text-6xl font-semibold leading-none tracking-tight [overflow-wrap:normal] [text-wrap:balance] sm:text-7xl md:text-8xl lg:text-[112px] xl:text-[128px] 2xl:text-[144px]"
@@ -192,7 +194,7 @@ export const HeroSection = ({
             </h1>
 
             <p className="max-w-3xl font-label text-xs font-medium uppercase tracking-[0.36em] text-[#25C5C5]">
-              SysAdmin / Developer — Automation &amp; Cloud Operations
+              {t.hero.role}
             </p>
           </div>
 
@@ -210,15 +212,15 @@ export const HeroSection = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
-            <ActionButton href="#contact">Run Profile</ActionButton>
-            <OutlineButton href="#projects">View Projects</OutlineButton>
+            <ActionButton href="#contact">{t.hero.runProfile}</ActionButton>
+            <OutlineButton href="#projects">{t.hero.viewProjects}</OutlineButton>
           </div>
 
           <div className="flex flex-wrap gap-2">
             {techTags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full px-3 py-1.5 font-label text-[10px] font-medium tracking-[0.28em] text-zinc-400"
+                className="motion-link rounded-full px-3 py-1.5 font-label text-[10px] font-medium tracking-[0.28em] text-zinc-400"
                 style={{
                   border: `1px solid ${NEON_BLUE}1F`,
                   background: 'rgba(11, 15, 20, 0.5)',

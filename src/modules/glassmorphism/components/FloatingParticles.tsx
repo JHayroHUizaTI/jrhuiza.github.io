@@ -31,6 +31,15 @@ function seededRandom(seed: number): number {
   return x - Math.floor(x);
 }
 
+/**
+ * Redondea a una precisión fija. Imprescindible para la hidratación: valores
+ * float de precisión completa en estilos inline se normalizan/expanden de forma
+ * distinta al parsear el HTML del servidor, provocando mismatches SSR–cliente.
+ */
+function round(value: number, decimals = 2): number {
+  return Number(value.toFixed(decimals));
+}
+
 export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
   count = 28,
   spread = 100,
@@ -42,12 +51,12 @@ export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
       const r3 = seededRandom(i * 3 + 3);
       return {
         id: i,
-        x: `${r1 * spread}%`,
-        y: `${r2 * spread}%`,
-        size: 1.5 + r3 * 3,
-        opacity: 0.15 + r3 * 0.35,
-        delay: `${r1 * 8}s`,
-        duration: `${4 + r2 * 6}s`,
+        x: `${round(r1 * spread)}%`,
+        y: `${round(r2 * spread)}%`,
+        size: round(1.5 + r3 * 3),
+        opacity: round(0.15 + r3 * 0.35, 3),
+        delay: `${round(r1 * 8)}s`,
+        duration: `${round(4 + r2 * 6)}s`,
       };
     });
   }, [count, spread]);
@@ -64,7 +73,7 @@ export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
             width: p.size,
             height: p.size,
             background: `radial-gradient(circle, rgba(57, 255, 20, ${p.opacity}) 0%, transparent 70%)`,
-            boxShadow: `0 0 ${p.size * 3}px rgba(57, 255, 20, ${p.opacity * 0.4})`,
+            boxShadow: `0 0 ${round(p.size * 3)}px rgba(57, 255, 20, ${round(p.opacity * 0.4, 3)})`,
             animation: `glassFloat ${p.duration} ease-in-out ${p.delay} infinite`,
             willChange: 'transform',
           }}
