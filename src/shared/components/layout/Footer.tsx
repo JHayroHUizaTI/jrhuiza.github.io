@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/shared/i18n';
+import { ContactIcons } from './ContactIcons';
 
 interface FooterProps {
   authorName?: string;
@@ -62,6 +63,8 @@ export const Footer = ({
           <span role="img" aria-label="coffee">☕</span>
           {' '}{t.footer.by} {authorName}
         </p>
+
+        <ContactIcons />
 
         <nav aria-label="Footer navigation" className="flex items-center gap-3">
           <a
