@@ -167,3 +167,102 @@ export const showcaseYears = (currentYear: number, oldest = 2023): number[] => {
   for (let year = currentYear; year >= oldest; year -= 1) years.push(year);
   return years;
 };
+
+// ---------------------------------------------------------------------------
+// Deterministic demo contributions
+//
+// When there is no live GitHub data (e.g. missing GITHUB_TOKEN) we render a
+// high-activity *sample* calendar instead of an empty grid. It MUST be
+// deterministic so server and client produce byte-identical markup (no
+// hydration mismatch): a seeded PRNG drives the density and dates are built by
+// iterating the calendar year — never `Math.random()` or an argless `Date`.
+// ---------------------------------------------------------------------------
+
+/** mulberry32 — tiny, fast, deterministic 32-bit PRNG. Returns [0, 1). */
+const mulberry32 = (seed: number): (() => number) => {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+/** Zero-pad to 2 digits without locale/Intl. */
+const pad2 = (value: number): string => (value < 10 ? `0${value}` : `${value}`);
+
+/** TZ-safe ISO yyyy-mm-dd from a UTC date (no toISOString round-trips needed). */
+const isoFromUtc = (date: Date): string =>
+  `${date.getUTCFullYear()}-${pad2(date.getUTCMonth() + 1)}-${pad2(date.getUTCDate())}`;
+
+/** Map a raw daily count to the 0–4 level scale (GitHub-like quartiles). */
+const levelFromCount = (count: number): ContributionDay['level'] => {
+  if (count <= 0) return 0;
+  if (count <= 3) return 1;
+  if (count <= 7) return 2;
+  if (count <= 12) return 3;
+  return 4;
+};
+
+/**
+ * Density model for one day. Weekdays are busy, weekends lighter, with
+ * occasional intense streaks and a few genuinely empty days — reads like a
+ * consistently productive engineer rather than uniform noise. Pure: all
+ * randomness comes from the injected PRNG.
+ */
+const demoCountFor = (dayOfWeek: number, rng: () => number): number => {
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+  const roll = rng();
+
+  // A small share of empty days keeps it believable (more on weekends).
+  const emptyChance = isWeekend ? 0.32 : 0.08;
+  if (roll < emptyChance) return 0;
+
+  // Occasional intense streak day (skewed toward weekdays).
+  const spikeChance = isWeekend ? 0.06 : 0.16;
+  if (rng() < spikeChance) return 13 + Math.floor(rng() * 10); // level 4
+
+  // Baseline productivity, skewed toward levels 2–4.
+  const base = isWeekend ? 1 : 4;
+  const spread = isWeekend ? 6 : 11;
+  return base + Math.floor(rng() * spread);
+};
+
+/** Build one deterministic, high-activity demo year aligned to Sunday weeks. */
+export const buildDemoContributionYear = (year: number): ContributionYear => {
+  const rng = mulberry32(year * 2654435761);
+  const weeks: ContributionWeek[] = [];
+  let total = 0;
+  let currentWeek: ContributionDay[] = [];
+
+  // Iterate every calendar day of `year` in UTC, grouping into Sunday-started
+  // weeks exactly like GitHub aligns its columns.
+  const cursor = new Date(Date.UTC(year, 0, 1));
+  const firstDow = cursor.getUTCDay();
+
+  // Pad the first (partial) week so day 0 lands in its real weekday slot.
+  for (let i = 0; i < firstDow; i += 1) currentWeek.push(null as unknown as ContributionDay);
+
+  while (cursor.getUTCFullYear() === year) {
+    const dayOfWeek = cursor.getUTCDay();
+    const count = demoCountFor(dayOfWeek, rng);
+    total += count;
+    currentWeek.push({ date: isoFromUtc(cursor), count, level: levelFromCount(count) });
+
+    if (dayOfWeek === 6) {
+      weeks.push({ days: currentWeek.filter(Boolean) });
+      currentWeek = [];
+    }
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  if (currentWeek.length > 0) weeks.push({ days: currentWeek.filter(Boolean) });
+
+  return { year, total, weeks };
+};
+
+/** Deterministic demo dataset for the given years (newest-first as provided). */
+export const buildDemoContributions = (years: number[]): ContributionYear[] =>
+  years.map(buildDemoContributionYear);

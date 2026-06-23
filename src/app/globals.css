@@ -328,6 +328,52 @@ body {
 }
 
 /* ============================================================
+   GitHub contribution calendar
+   Staggered, GPU-cheap mount fade (opacity only) + soft hover glow.
+   The stagger delay is set inline per column and capped in the component.
+   ============================================================ */
+.github-cal-cell {
+  opacity: 0;
+  animation: github-cell-in 0.42s ease-out forwards;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.16s ease;
+  will-change: transform, opacity;
+}
+
+.github-cal-cell:hover {
+  transform: scale(1.18);
+  filter: saturate(1.15);
+  box-shadow:
+    0 0 0 1px rgba(57, 211, 83, 0.5),
+    0 0 10px rgba(57, 211, 83, 0.35);
+}
+
+@keyframes github-cell-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .github-cal-cell {
+    opacity: 1;
+    animation: none;
+    transition: none;
+  }
+
+  .github-cal-cell:hover {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+  }
+}
+
+/* ============================================================
    Glassmorphism Hero – animaciones
    ============================================================ */
 @keyframes glassFloat {

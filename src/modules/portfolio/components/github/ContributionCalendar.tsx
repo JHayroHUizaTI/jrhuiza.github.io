@@ -6,18 +6,22 @@ const MONTHS = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ] as const;
 
-// Level → background. Derived from the theme primary (#39FF14) at rising alpha
-// so the scale reads naturally from "empty" to "more".
+// Standard GitHub green contribution palette. Level 0 is a dark greenish-gray
+// that reads clearly as "empty" over the dark card; 1→4 climb the classic scale.
 const LEVEL_BG: Record<ContributionDay['level'], string> = {
-  0: 'rgba(57, 255, 20, 0.05)',
-  1: 'rgba(57, 255, 20, 0.22)',
-  2: 'rgba(57, 255, 20, 0.42)',
-  3: 'rgba(57, 255, 20, 0.66)',
-  4: 'rgba(57, 255, 20, 0.92)',
+  0: '#0E1A14',
+  1: '#0E4429',
+  2: '#006D32',
+  3: '#26A641',
+  4: '#39D353',
 };
 
 /** Parse the month index (0-11) straight from a yyyy-mm-dd string (TZ-safe). */
 const monthOf = (isoDate: string): number => Number(isoDate.slice(5, 7)) - 1;
+
+// Cap the per-cell mount stagger so it stays cheap regardless of week count.
+const STAGGER_STEP_MS = 12;
+const STAGGER_CAP_MS = 520;
 
 interface ContributionCalendarProps {
   year: ContributionYear;
@@ -44,14 +48,14 @@ export const ContributionCalendar = ({
 
   return (
     <div className="w-full">
-      <div className="overflow-x-auto pb-1">
-        <div className="inline-flex min-w-full flex-col gap-1">
+      <div className="overflow-x-auto pb-1.5">
+        <div className="inline-flex min-w-full flex-col gap-1.5">
           {/* Month labels aligned to week columns */}
-          <div className="flex gap-[3px] pl-0">
+          <div className="flex gap-[4px] pl-0">
             {monthLabels.map((label, index) => (
               <div
                 key={`m-${index}`}
-                className="w-[11px] shrink-0 font-label text-[9px] leading-none text-zinc-500"
+                className="w-3 shrink-0 font-label text-[10px] leading-none text-zinc-500"
               >
                 {label}
               </div>
@@ -59,17 +63,23 @@ export const ContributionCalendar = ({
           </div>
 
           {/* Week columns */}
-          <div className="flex gap-[3px]">
+          <div className="github-cal-grid flex gap-[4px]">
             {year.weeks.map((week, weekIndex) => (
-              <div key={`w-${weekIndex}`} className="flex flex-col gap-[3px]">
-                {week.days.map((day) => (
-                  <span
-                    key={day.date}
-                    title={`${day.count} contributions · ${day.date}`}
-                    className="block h-[11px] w-[11px] rounded-[2px] ring-1 ring-inset ring-white/[0.03] transition-colors"
-                    style={{ backgroundColor: LEVEL_BG[day.level] }}
-                  />
-                ))}
+              <div key={`w-${weekIndex}`} className="flex flex-col gap-[4px]">
+                {week.days.map((day) => {
+                  const delay = Math.min(weekIndex * STAGGER_STEP_MS, STAGGER_CAP_MS);
+                  return (
+                    <span
+                      key={day.date}
+                      title={`${day.count} contributions · ${day.date}`}
+                      className="github-cal-cell block h-3 w-3 rounded-[3px] ring-1 ring-inset ring-white/[0.04]"
+                      style={{
+                        backgroundColor: LEVEL_BG[day.level],
+                        animationDelay: `${delay}ms`,
+                      }}
+                    />
+                  );
+                })}
               </div>
             ))}
           </div>
@@ -77,13 +87,13 @@ export const ContributionCalendar = ({
       </div>
 
       {/* Less → More legend */}
-      <div className="mt-3 flex items-center justify-end gap-2 font-label text-[10px] text-zinc-500">
+      <div className="mt-4 flex items-center justify-end gap-2 font-label text-[10px] text-zinc-500">
         <span>{lessLabel}</span>
-        <span className="flex items-center gap-[3px]">
+        <span className="flex items-center gap-[4px]">
           {([0, 1, 2, 3, 4] as const).map((level) => (
             <span
               key={level}
-              className="block h-[11px] w-[11px] rounded-[2px]"
+              className="block h-3 w-3 rounded-[3px]"
               style={{ backgroundColor: LEVEL_BG[level] }}
             />
           ))}

@@ -2,7 +2,9 @@
 
 import React from 'react';
 import {
+  buildDemoContributions,
   curatedProjectToCard,
+  showcaseYears,
   type CuratedProjectLike,
   type GithubShowcaseData,
 } from '../../domain/github';
@@ -25,6 +27,13 @@ interface GitHubShowcaseProps {
 const groupThousands = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
+/**
+ * Deterministic high-activity sample shown only when there's no live data.
+ * Built once at module scope from a fixed year list so server and client
+ * render byte-identical markup (no `Math.random`, no argless `Date`).
+ */
+const DEMO_CONTRIBUTIONS = buildDemoContributions(showcaseYears(2026));
+
 export const GitHubShowcase = ({ data, fallbackProjects, profileUrl }: GitHubShowcaseProps) => {
   const { t } = useLanguage();
   const g = t.github;
@@ -34,7 +43,9 @@ export const GitHubShowcase = ({ data, fallbackProjects, profileUrl }: GitHubSho
       ? data.projects
       : fallbackProjects.map(curatedProjectToCard);
 
-  const contributions = data?.contributions ?? [];
+  const liveContributions = data?.contributions ?? [];
+  const isSample = liveContributions.length === 0;
+  const contributions = isSample ? DEMO_CONTRIBUTIONS : liveContributions;
 
   return (
     <section id="github" className="mx-auto max-w-7xl px-8 py-16">
@@ -44,7 +55,14 @@ export const GitHubShowcase = ({ data, fallbackProjects, profileUrl }: GitHubSho
       <GitHubActivityCard
         title={g.activityTitle}
         contributions={contributions}
-        labels={{ less: g.less, more: g.more, unavailable: g.unavailable }}
+        isSample={isSample}
+        labels={{
+          less: g.less,
+          more: g.more,
+          unavailable: g.unavailable,
+          sample: g.sample,
+          sampleAria: g.sampleAria,
+        }}
         formatTotal={(total, year) => `${groupThousands(total)} ${g.contributionsLabel} ${year}`}
       />
 

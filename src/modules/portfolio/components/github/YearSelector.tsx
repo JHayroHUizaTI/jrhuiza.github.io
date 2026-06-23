@@ -26,8 +26,8 @@ export const YearSelector = ({ years, selected, onSelect }: YearSelectorProps) =
             className={[
               'motion-button rounded-md px-3 py-1 font-label text-xs transition-colors',
               isActive
-                ? 'border border-[rgba(57,255,20,0.4)] bg-[rgba(57,255,20,0.08)] text-primary'
-                : 'border border-transparent text-zinc-500 hover:text-on-surface',
+                ? 'border border-[#26A641]/55 bg-[#0E4429]/45 text-[#39D353]'
+                : 'border border-transparent text-zinc-500 hover:border-[#26A641]/25 hover:text-[#39D353]/80',
             ].join(' ')}
           >
             {year}

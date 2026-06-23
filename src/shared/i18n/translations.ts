@@ -56,6 +56,8 @@ export interface Translations {
     more: string;
     contributionsLabel: string;
     unavailable: string;
+    sample: string;
+    sampleAria: string;
     stars: string;
     liveDemo: string;
     updated: string;
@@ -131,6 +133,8 @@ const es: Translations = {
     more: 'Más',
     contributionsLabel: 'contribuciones en',
     unavailable: 'Actividad de GitHub no disponible por ahora.',
+    sample: 'muestra',
+    sampleAria: 'Datos de muestra: actividad de ejemplo, no en vivo',
     stars: 'Estrellas',
     liveDemo: 'Demo en vivo',
     updated: 'Actualizado',
@@ -208,6 +212,8 @@ const en: Translations = {
     more: 'More',
     contributionsLabel: 'contributions in',
     unavailable: 'GitHub activity is unavailable right now.',
+    sample: 'sample',
+    sampleAria: 'Sample data: example activity, not live',
     stars: 'Stars',
     liveDemo: 'Live demo',
     updated: 'Updated',
