@@ -9,6 +9,206 @@ const NEON_BLUE = '#25C5C5';
 
 const techTags = ['NEXT.JS', 'LINUX', 'TERRAFORM', 'ANSIBLE', 'AWS', 'AZURE'];
 
+/* ------------------------------------------------------------------ *
+ * Geometric triangular mesh (decorative background)
+ *
+ * A deterministic, jittered point field is triangulated once at module
+ * scope (Bowyer–Watson Delaunay). Because the PRNG is seeded and the
+ * computation is pure, SSR and client markup are byte-identical — no
+ * hydration mismatch. The result is an irregular, architectural mesh
+ * (NOT a square lattice) drawn as an inline SVG in user units over a
+ * 1000x1000 viewBox stretched to cover the section.
+ * ------------------------------------------------------------------ */
+const MESH_SIZE = 1000;
+
+type Point = readonly [number, number];
+
+/** Seeded PRNG (mulberry32) — deterministic across SSR/client. */
+const createRandom = (seed: number) => {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const buildMeshPoints = (): Point[] => {
+  const rand = createRandom(20240611);
+  const cols = 9;
+  const rows = 9;
+  const cellW = MESH_SIZE / (cols - 1);
+  const cellH = MESH_SIZE / (rows - 1);
+  const points: Point[] = [];
+
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      const jitterX = (rand() - 0.5) * cellW * 0.62;
+      const jitterY = (rand() - 0.5) * cellH * 0.62;
+      const x = Math.max(-60, Math.min(MESH_SIZE + 60, c * cellW + jitterX));
+      const y = Math.max(-60, Math.min(MESH_SIZE + 60, r * cellH + jitterY));
+      points.push([Math.round(x * 100) / 100, Math.round(y * 100) / 100]);
+    }
+  }
+  return points;
+};
+
+/** Bowyer–Watson Delaunay → unique undirected edge list (index pairs). */
+const triangulateEdges = (points: Point[]): Array<readonly [number, number]> => {
+  const S = 1e6;
+  const verts: Point[] = [...points, [-S, -S], [S, -S], [0, S]];
+  const n = points.length;
+  const i0 = n;
+  const i1 = n + 1;
+  const i2 = n + 2;
+
+  let triangles: Array<[number, number, number]> = [[i0, i1, i2]];
+
+  const inCircumcircle = (tri: [number, number, number], p: Point): boolean => {
+    const [a, b, c] = [verts[tri[0]], verts[tri[1]], verts[tri[2]]];
+    const ax = a[0];
+    const ay = a[1];
+    const bx = b[0];
+    const by = b[1];
+    const cx = c[0];
+    const cy = c[1];
+    const d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+    if (Math.abs(d) < 1e-9) return false;
+    const a2 = ax * ax + ay * ay;
+    const b2 = bx * bx + by * by;
+    const c2 = cx * cx + cy * cy;
+    const ux = (a2 * (by - cy) + b2 * (cy - ay) + c2 * (ay - by)) / d;
+    const uy = (a2 * (cx - bx) + b2 * (ax - cx) + c2 * (bx - ax)) / d;
+    const dx = p[0] - ux;
+    const dy = p[1] - uy;
+    const r2 = (ax - ux) * (ax - ux) + (ay - uy) * (ay - uy);
+    return dx * dx + dy * dy <= r2 + 1e-6;
+  };
+
+  for (let i = 0; i < n; i += 1) {
+    const p = verts[i];
+    const bad = triangles.filter((tri) => inCircumcircle(tri, p));
+    const boundary: Array<[number, number]> = [];
+
+    for (const tri of bad) {
+      const triEdges: Array<[number, number]> = [
+        [tri[0], tri[1]],
+        [tri[1], tri[2]],
+        [tri[2], tri[0]],
+      ];
+      for (const edge of triEdges) {
+        let shared = false;
+        for (const other of bad) {
+          if (other === tri) continue;
+          const oe: Array<[number, number]> = [
+            [other[0], other[1]],
+            [other[1], other[2]],
+            [other[2], other[0]],
+          ];
+          for (const o of oe) {
+            if (
+              (o[0] === edge[0] && o[1] === edge[1]) ||
+              (o[0] === edge[1] && o[1] === edge[0])
+            ) {
+              shared = true;
+            }
+          }
+        }
+        if (!shared) boundary.push(edge);
+      }
+    }
+
+    triangles = triangles.filter((tri) => !bad.includes(tri));
+    for (const edge of boundary) {
+      triangles.push([edge[0], edge[1], i]);
+    }
+  }
+
+  triangles = triangles.filter((tri) => tri.every((idx) => idx < n));
+
+  const seen = new Set<string>();
+  const edges: Array<readonly [number, number]> = [];
+  for (const tri of triangles) {
+    const pairs: Array<[number, number]> = [
+      [tri[0], tri[1]],
+      [tri[1], tri[2]],
+      [tri[2], tri[0]],
+    ];
+    for (const [a, b] of pairs) {
+      const key = a < b ? `${a}_${b}` : `${b}_${a}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        edges.push([a, b]);
+      }
+    }
+  }
+  return edges;
+};
+
+const MESH_POINTS = buildMeshPoints();
+const MESH_EDGES = triangulateEdges(MESH_POINTS);
+
+/**
+ * A deterministic subset of nodes get a soft diffused glow / breathing
+ * pulse. Chosen by a stable modulo so SSR/client agree.
+ */
+const GLOW_NODES = MESH_POINTS.map((p, i) => ({ p, i })).filter(
+  ({ i }) => i % 7 === 3 || i % 11 === 5,
+);
+
+const GeometricMesh = () => (
+  <svg
+    aria-hidden
+    className="pointer-events-none absolute inset-0 h-full w-full"
+    viewBox={`0 0 ${MESH_SIZE} ${MESH_SIZE}`}
+    preserveAspectRatio="xMidYMid slice"
+  >
+    <defs>
+      <radialGradient id="hero-mesh-node-glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="rgba(0, 200, 230, 0.55)" />
+        <stop offset="45%" stopColor="rgba(0, 180, 210, 0.18)" />
+        <stop offset="100%" stopColor="rgba(0, 180, 210, 0)" />
+      </radialGradient>
+    </defs>
+
+    {/* Edges: fine, low-opacity dark cyan/teal lines */}
+    <g className="hero-mesh-lines" stroke="rgba(0, 180, 210, 0.18)" strokeWidth={0.8}>
+      {MESH_EDGES.map(([a, b], index) => (
+        <line
+          key={`edge-${a}-${b}-${index}`}
+          x1={MESH_POINTS[a][0]}
+          y1={MESH_POINTS[a][1]}
+          x2={MESH_POINTS[b][0]}
+          y2={MESH_POINTS[b][1]}
+        />
+      ))}
+    </g>
+
+    {/* Soft diffused glow on a subset of intersections */}
+    <g className="hero-mesh-glow">
+      {GLOW_NODES.map(({ p, i }) => (
+        <circle
+          key={`glow-${i}`}
+          cx={p[0]}
+          cy={p[1]}
+          r={18}
+          fill="url(#hero-mesh-node-glow)"
+          style={{ animationDelay: `${(i % 6) * 0.7}s` }}
+        />
+      ))}
+    </g>
+
+    {/* Crisp intersection dots */}
+    <g fill="rgba(70, 220, 235, 0.55)">
+      {MESH_POINTS.map((p, i) => (
+        <circle key={`node-${i}`} cx={p[0]} cy={p[1]} r={1.6} />
+      ))}
+    </g>
+  </svg>
+);
+
 const splitName = (name: string) => name.trim().split(/\s+/).filter(Boolean);
 
 const splitSummary = (text: string) => {
@@ -145,6 +345,24 @@ export const HeroSection = ({
             "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
         }}
       />
+      {/* Geometric triangular mesh — slowly drifts as a whole */}
+      <div
+        aria-hidden
+        className="hero-mesh-layer pointer-events-none absolute inset-0 overflow-hidden opacity-70"
+      >
+        <GeometricMesh />
+      </div>
+
+      {/* Center radial depth gradient (vignette + focal glow) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(70% 60% at 50% 45%, rgba(0, 180, 210, 0.10), transparent 60%), radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(5, 7, 10, 0.85) 100%)',
+        }}
+      />
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 opacity-40"
@@ -162,9 +380,43 @@ export const HeroSection = ({
           opacity: 0;
           animation: hero-fade-up 640ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
+
+        /* Slow, GPU-friendly drift of the whole mesh (transform only) */
+        @keyframes hero-mesh-drift {
+          0%   { transform: translate3d(0, 0, 0) scale(1.06); }
+          50%  { transform: translate3d(-1.4%, -1.1%, 0) scale(1.06); }
+          100% { transform: translate3d(0, 0, 0) scale(1.06); }
+        }
+        .hero-mesh-layer {
+          transform: scale(1.06);
+          will-change: transform;
+          animation: hero-mesh-drift 38s ease-in-out infinite;
+        }
+
+        /* Breathing glow on selected nodes (opacity only) */
+        @keyframes hero-mesh-breathe {
+          0%, 100% { opacity: 0.35; }
+          50%      { opacity: 1; }
+        }
+        .hero-mesh-glow circle {
+          opacity: 0.5;
+          animation: hero-mesh-breathe 6s ease-in-out infinite;
+          transform-box: fill-box;
+          transform-origin: center;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-mesh-layer {
+            animation: none;
+          }
+          .hero-mesh-glow circle {
+            animation: none;
+            opacity: 0.55;
+          }
+        }
       `}</style>
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative z-10 mx-auto max-w-6xl">
         <header className="hero-fade flex flex-col gap-10 sm:gap-12">
           <div style={{ animationDelay: '0ms' }}>
             <AvailabilityBadge label={t.hero.available} />
