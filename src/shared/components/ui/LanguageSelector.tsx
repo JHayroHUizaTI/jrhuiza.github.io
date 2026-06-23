@@ -4,10 +4,39 @@ import React from 'react';
 import { useLanguage, type Language } from '@/shared/i18n';
 
 /**
- * Navbar language switcher. Uses a native <select> so it stays accessible and
- * works reliably across desktop and mobile, styled to match the neon-glass UI.
- * Option labels are shown in their own language (Español / English) regardless
- * of the active UI language, which is the conventional pattern.
+ * Inline globe icon that visually matches lucide's `Globe2`
+ * (a circle with a vertical meridian + two latitude curves).
+ * Purely decorative — `aria-hidden`, sized via the parent.
+ */
+const GlobeIcon = ({ className = '' }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    focusable="false"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.75}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    {/* outer sphere */}
+    <circle cx="12" cy="12" r="9" />
+    {/* meridian (vertical great circle) */}
+    <path d="M12 3a14 14 0 0 0 0 18a14 14 0 0 0 0-18" />
+    {/* two latitude curves */}
+    <path d="M3.6 9h16.8" />
+    <path d="M3.6 15h16.8" />
+  </svg>
+);
+
+/**
+ * Premium language toggle capsule. A single click swaps the active language
+ * via `setLanguage` (two-language toggle — no dropdown needed). The capsule
+ * shows an inline globe plus the CURRENT active language code (`ES` / `EN`).
+ *
+ * SSR-safe: language is read from the i18n external store (returns the default
+ * on the server), so the rendered code matches between server and client.
  */
 export const LanguageSelector = ({
   className = '',
@@ -18,52 +47,38 @@ export const LanguageSelector = ({
 }) => {
   const { language, setLanguage, t } = useLanguage();
   const nextLanguage: Language = language === 'es' ? 'en' : 'es';
+  const currentCode = language === 'es' ? 'ES' : 'EN';
   const currentLabel = language === 'es' ? 'Español' : 'English';
   const nextLabel = nextLanguage === 'es' ? 'Español' : 'English';
-  const compactLabel =
+  const ariaLabel =
     language === 'es'
-      ? `Idioma: ${currentLabel}. Cambiar a ${nextLabel}.`
-      : `Language: ${currentLabel}. Switch to ${nextLabel}.`;
-
-  if (compact) {
-    return (
-      <button
-        type="button"
-        aria-label={compactLabel}
-        title={t.language.label}
-        onClick={() => setLanguage(nextLanguage)}
-        className={`group motion-button inline-flex h-9 w-9 items-center justify-center rounded-md border border-[rgba(57,255,20,0.2)] bg-[rgba(3,10,5,0.6)] text-[#39ff14] transition-all duration-300 hover:border-[rgba(57,255,20,0.5)] hover:bg-[rgba(57,255,20,0.05)] focus-visible:border-[#39ff14] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#39ff14] ${className}`}
-      >
-        <span className="material-symbols-outlined icon-anim-rotate text-[18px]">
-          language
-        </span>
-      </button>
-    );
-  }
+      ? `${t.language.label}: ${currentLabel}. Cambiar a ${nextLabel}.`
+      : `${t.language.label}: ${currentLabel}. Switch to ${nextLabel}.`;
 
   return (
-    <div className={`group relative inline-flex items-center ${className}`}>
+    <button
+      type="button"
+      aria-label={ariaLabel}
+      title={ariaLabel}
+      onClick={() => setLanguage(nextLanguage)}
+      className={[
+        'group motion-button inline-flex h-9 items-center justify-center overflow-hidden rounded-full border border-[rgba(57,255,20,0.18)] bg-[rgba(3,10,5,0.6)] text-[#39ff14] transition-all duration-300 ease-out hover:border-[rgba(57,255,20,0.5)] hover:bg-[rgba(57,255,20,0.06)] focus-visible:border-[#39ff14] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#39ff14]',
+        compact ? 'w-9 gap-0 px-0' : 'gap-1.5 px-3',
+        className,
+      ].join(' ')}
+    >
+      <GlobeIcon className="icon-anim-rotate h-[18px] w-[18px] shrink-0 transition-colors duration-200" />
       <span
-        aria-hidden="true"
-        className="material-symbols-outlined icon-anim pointer-events-none absolute left-2 text-[16px] text-[#39ff14]"
+        aria-hidden={compact ? true : undefined}
+        className={[
+          'font-label text-xs font-semibold uppercase tracking-[0.16em] transition-all duration-300 ease-out',
+          compact
+            ? 'max-w-0 -translate-x-1 opacity-0'
+            : 'max-w-[3rem] translate-x-0 opacity-100',
+        ].join(' ')}
       >
-        language
+        {currentCode}
       </span>
-      <select
-        aria-label={t.language.label}
-        value={language}
-        onChange={(event) => setLanguage(event.target.value as Language)}
-        className="motion-button cursor-pointer appearance-none rounded-md border border-[rgba(57,255,20,0.2)] bg-[rgba(3,10,5,0.6)] py-2 pl-8 pr-7 font-label text-xs uppercase tracking-[0.12em] text-zinc-300 outline-none transition-colors duration-200 hover:border-[rgba(57,255,20,0.5)] hover:text-[#39ff14] focus-visible:border-[#39ff14] focus-visible:ring-1 focus-visible:ring-[#39ff14]"
-      >
-        <option value="es">Español</option>
-        <option value="en">English</option>
-      </select>
-      <span
-        aria-hidden="true"
-        className="material-symbols-outlined pointer-events-none absolute right-1 text-[16px] text-zinc-500 transition-transform duration-300 group-hover:rotate-180 group-hover:text-[#39ff14]"
-      >
-        expand_more
-      </span>
-    </div>
+    </button>
   );
 };
