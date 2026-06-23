@@ -47,6 +47,19 @@ export interface Translations {
   projects: {
     title: string;
   };
+  github: {
+    activityTitle: string;
+    projectsKicker: string;
+    projectsHeadline: string;
+    viewGithub: string;
+    less: string;
+    more: string;
+    contributionsLabel: string;
+    unavailable: string;
+    stars: string;
+    liveDemo: string;
+    updated: string;
+  };
   contact: {
     title: string;
     subtitle: string;
@@ -108,6 +121,19 @@ const es: Translations = {
   },
   projects: {
     title: 'Proyectos',
+  },
+  github: {
+    activityTitle: 'Actividad en GitHub',
+    projectsKicker: 'Sincronizado desde GitHub',
+    projectsHeadline: 'Una selección de mi trabajo de software del que estoy orgulloso',
+    viewGithub: 'Ver GitHub',
+    less: 'Menos',
+    more: 'Más',
+    contributionsLabel: 'contribuciones en',
+    unavailable: 'Actividad de GitHub no disponible por ahora.',
+    stars: 'Estrellas',
+    liveDemo: 'Demo en vivo',
+    updated: 'Actualizado',
   },
   contact: {
     title: 'Listo para construir la próxima interfaz',
@@ -172,6 +198,19 @@ const en: Translations = {
   },
   projects: {
     title: 'Projects',
+  },
+  github: {
+    activityTitle: 'GitHub Activity',
+    projectsKicker: 'Synced from GitHub',
+    projectsHeadline: 'A selection of my software work that I am proud of',
+    viewGithub: 'View GitHub',
+    less: 'Less',
+    more: 'More',
+    contributionsLabel: 'contributions in',
+    unavailable: 'GitHub activity is unavailable right now.',
+    stars: 'Stars',
+    liveDemo: 'Live demo',
+    updated: 'Updated',
   },
   contact: {
     title: 'Open to build the next interface',
