@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next_old_root_owned/
 /out/
 
 # production
