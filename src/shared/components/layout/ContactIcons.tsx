@@ -27,16 +27,14 @@ export const CONTACT_LINKS: ContactLink[] = [
   {
     id: 'linkedin',
     label: 'LinkedIn',
-    // TODO: replace with your LinkedIn profile URL.
-    href: 'https://www.linkedin.com/in/PON_AQUI_TU_USUARIO',
+    href: 'https://www.linkedin.com/in/jhuizaanccasi/',
     external: true,
     path: 'M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z',
   },
   {
     id: 'phone',
     label: 'Teléfono',
-    // TODO: replace with your phone number (E.164, e.g. tel:+51987654321).
-    href: 'tel:+510000000000',
+    href: 'tel:+51923848525',
     external: false,
     path: 'M20 22.621l-3.521-6.795c-.008.004-1.974.97-2.064 1.011-2.24 1.086-6.799-7.82-4.609-8.994l2.083-1.026-3.493-6.817-2.106 1.039c-7.202 3.755 4.233 25.982 11.6 22.615.121-.055 2.102-1.029 2.11-1.033z',
   },
