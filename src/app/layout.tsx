@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'SYS_ARCHITECT // JHAYRO HUIZA',
+  title: 'JR.HUIZA - TECH_PORTFOLIO',
   description: 'Focused on the automation and operation of hybrid infrastructures. I design, deploy, and manage highly available environments using Ansible, Terraform, and DevOps practices, ensuring scalability, security, and operational efficiency in production systems.',
 };
 
