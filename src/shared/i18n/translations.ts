@@ -83,6 +83,20 @@ export interface Translations {
     scrollTop: string;
     rights: string;
   };
+  assistant: {
+    launcherAria: string;
+    closeAria: string;
+    title: string;
+    subtitle: string;
+    greeting: string;
+    placeholder: string;
+    send: string;
+    sendAria: string;
+    emptyState: string;
+    typing: string;
+    error: string;
+    emptyMessage: string;
+  };
 }
 
 const es: Translations = {
@@ -162,6 +176,21 @@ const es: Translations = {
     scrollTop: 'Volver arriba',
     rights: 'Todos los derechos reservados',
   },
+  assistant: {
+    launcherAria: 'Abrir asistente virtual',
+    closeAria: 'Cerrar asistente virtual',
+    title: 'Asistente IA',
+    subtitle: 'Pregúntame sobre JR Huiza',
+    greeting:
+      '¡Hola! Soy el asistente virtual de JR Huiza. Puedo contarte sobre su experiencia en DevOps, infraestructura y automatización. ¿En qué te ayudo?',
+    placeholder: 'Escribe tu mensaje...',
+    send: 'Enviar',
+    sendAria: 'Enviar mensaje',
+    emptyState: 'Inicia la conversación enviando un mensaje.',
+    typing: 'Escribiendo...',
+    error: 'No se pudo obtener una respuesta. Inténtalo nuevamente.',
+    emptyMessage: 'Escribe un mensaje antes de enviar.',
+  },
 };
 
 const en: Translations = {
@@ -240,6 +269,21 @@ const en: Translations = {
     by: 'by',
     scrollTop: 'Scroll to top',
     rights: 'All rights reserved',
+  },
+  assistant: {
+    launcherAria: 'Open virtual assistant',
+    closeAria: 'Close virtual assistant',
+    title: 'AI Assistant',
+    subtitle: 'Ask me about JR Huiza',
+    greeting:
+      "Hi! I'm JR Huiza's virtual assistant. I can tell you about his DevOps, infrastructure and automation experience. How can I help?",
+    placeholder: 'Type your message...',
+    send: 'Send',
+    sendAria: 'Send message',
+    emptyState: 'Start the conversation by sending a message.',
+    typing: 'Typing...',
+    error: 'Could not get a response. Please try again.',
+    emptyMessage: 'Type a message before sending.',
   },
 };
 

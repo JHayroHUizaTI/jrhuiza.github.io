@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { WhatsAppButton } from '@/shared/components/ui/WhatsAppButton';
+import { ChatWidget } from '@/modules/assistant';
 import { LanguageProvider } from '@/shared/i18n';
 
 const spaceGrotesk = Space_Grotesk({
@@ -52,6 +53,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
           <WhatsAppButton />
+          <ChatWidget />
         </LanguageProvider>
       </body>
     </html>
