@@ -89,13 +89,17 @@ export interface Translations {
     title: string;
     subtitle: string;
     greeting: string;
+    hint: string;
     placeholder: string;
     send: string;
     sendAria: string;
+    reset: string;
+    resetAria: string;
     emptyState: string;
     typing: string;
     error: string;
     emptyMessage: string;
+    suggestions: string[];
   };
 }
 
@@ -115,7 +119,7 @@ const es: Translations = {
   hero: {
     available: 'Disponible para proyectos',
     greeting: 'Hola, soy',
-    role: 'SysAdmin / Desarrollador — Automatización y Operaciones Cloud',
+    role: 'SysAdmin / Desarrollador — Automatización y GenAI',
     runProfile: 'Ejecutar perfil',
     viewProjects: 'Ver proyectos',
   },
@@ -180,16 +184,24 @@ const es: Translations = {
     launcherAria: 'Abrir asistente virtual',
     closeAria: 'Cerrar asistente virtual',
     title: 'Asistente IA',
-    subtitle: 'Pregúntame sobre JR Huiza',
+    subtitle: 'Asistente, contenido y soporte',
     greeting:
-      '¡Hola! Soy el asistente virtual de JR Huiza. Puedo contarte sobre su experiencia en DevOps, infraestructura y automatización. ¿En qué te ayudo?',
+      '¡Hola! Soy el asistente virtual de Jhayro Huiza. Puedo ayudarte con preguntas sobre su perfil, redactar contenido y orientar a potenciales clientes. ¿En qué te ayudo?',
+    hint: 'Prueba una sugerencia o escribe tu consulta.',
     placeholder: 'Escribe tu mensaje...',
     send: 'Enviar',
     sendAria: 'Enviar mensaje',
+    reset: 'Nueva conversación',
+    resetAria: 'Reiniciar conversación del asistente',
     emptyState: 'Inicia la conversación enviando un mensaje.',
     typing: 'Escribiendo...',
     error: 'No se pudo obtener una respuesta. Inténtalo nuevamente.',
     emptyMessage: 'Escribe un mensaje antes de enviar.',
+    suggestions: [
+      'Resume proyectos usando AI. ¿Podrías comentar sobre el proyecto AI_radar?',
+      'Redacta una propuesta breve para un cliente que necesita automatización.',
+      'What services can JR Huiza offer to a startup?',
+    ],
   },
 };
 
@@ -274,16 +286,24 @@ const en: Translations = {
     launcherAria: 'Open virtual assistant',
     closeAria: 'Close virtual assistant',
     title: 'AI Assistant',
-    subtitle: 'Ask me about JR Huiza',
+    subtitle: 'Assistant, content, and support',
     greeting:
-      "Hi! I'm JR Huiza's virtual assistant. I can tell you about his DevOps, infrastructure and automation experience. How can I help?",
+      "Hi! I'm JR Huiza's virtual assistant. I can help with questions about his profile, draft content, and guide potential clients. How can I help?",
+    hint: 'Try a suggestion or type your own request.',
     placeholder: 'Type your message...',
     send: 'Send',
     sendAria: 'Send message',
+    reset: 'New chat',
+    resetAria: 'Reset assistant conversation',
     emptyState: 'Start the conversation by sending a message.',
     typing: 'Typing...',
     error: 'Could not get a response. Please try again.',
     emptyMessage: 'Type a message before sending.',
+    suggestions: [
+      'Summarize AI-focused projects. Could you comment on the AI_radar project?',
+      'Write a short proposal for a client that needs automation.',
+      'How can JR Huiza support cloud operations for a growing company?',
+    ],
   },
 };
 

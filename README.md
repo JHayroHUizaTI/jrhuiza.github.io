@@ -1,4 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) portfolio project with a server-side AI assistant powered by the OpenAI API.
+
+## Environment variables
+
+Create `.env.local` with the variables you need for each backend integration.
+
+```bash
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxx
+CONTACT_FROM_EMAIL="Portfolio <onboarding@resend.dev>"
+GITHUB_USERNAME=your-github-username
+GITHUB_TOKEN=github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OPENAI_API_KEY=sk-proj-xxxx
+# Optional
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Important: never expose `OPENAI_API_KEY` with a `NEXT_PUBLIC_` prefix. The chatbot uses it only from `src/app/api/chat/route.ts` on the server.
 
 ## Getting Started
 

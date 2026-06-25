@@ -1,7 +1,9 @@
+import 'server-only';
+
 import type { ChatMessage } from '../domain/chat';
 
 export interface ChatCompletionPort {
-  complete(messages: ChatMessage[]): Promise<string>;
+  complete(messages: ChatMessage[], instructions?: string): Promise<string>;
 }
 
 export class MissingOpenAiConfigurationError extends Error {
@@ -12,26 +14,37 @@ export class MissingOpenAiConfigurationError extends Error {
 }
 
 interface OpenAiChatResponse {
-  choices?: Array<{ message?: { content?: string } }>;
+  output?: Array<{
+    content?: Array<{
+      text?: string;
+      type?: string;
+    }>;
+    role?: string;
+    type?: string;
+  }>;
 }
 
 export class OpenAiChatService implements ChatCompletionPort {
-  private readonly endpoint = 'https://api.openai.com/v1/chat/completions';
+  private readonly endpoint = 'https://api.openai.com/v1/responses';
 
   constructor(
     private readonly apiKey = process.env.OPENAI_API_KEY,
     private readonly model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
   ) {}
 
-  async complete(messages: ChatMessage[]): Promise<string> {
+  async complete(messages: ChatMessage[], instructions?: string): Promise<string> {
     if (!this.apiKey) {
       throw new MissingOpenAiConfigurationError();
     }
 
     const response = await fetch(this.endpoint, {
       body: JSON.stringify({
-        max_tokens: 600,
-        messages,
+        input: messages.map((message) => ({
+          content: [{ text: message.content, type: 'input_text' }],
+          role: message.role,
+        })),
+        instructions,
+        max_output_tokens: 600,
         model: this.model,
         temperature: 0.6,
       }),
@@ -47,7 +60,11 @@ export class OpenAiChatService implements ChatCompletionPort {
     }
 
     const payload = (await response.json()) as OpenAiChatResponse;
-    const reply = payload.choices?.[0]?.message?.content?.trim();
+    const reply = payload.output
+      ?.flatMap((item) => item.content ?? [])
+      .find((item) => item.type === 'output_text')
+      ?.text
+      ?.trim();
 
     if (!reply) {
       throw new Error('El proveedor del asistente devolvio una respuesta vacia.');

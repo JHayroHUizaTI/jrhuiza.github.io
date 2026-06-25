@@ -18,7 +18,7 @@ export const WhatsAppButton = ({
       rel="noopener noreferrer"
       aria-label={ariaLabel}
       className="
-        group fixed bottom-6 right-6 z-50
+        floating-cta floating-cta--whatsapp group fixed bottom-6 right-6 z-50
         inline-flex max-w-[calc(100vw-3rem)] items-center gap-3 rounded-full
         bg-[#25D366] px-5 py-3 text-white shadow-lg shadow-green-500/30
         outline-none transition-all duration-300 ease-out
@@ -29,6 +29,10 @@ export const WhatsAppButton = ({
         motion-reduce:transition-none motion-reduce:hover:scale-100
       "
     >
+      <span aria-hidden="true" className="floating-cta__badge">
+        <span className="floating-cta__badge-dot" />
+        online
+      </span>
       <span
         aria-hidden="true"
         className="

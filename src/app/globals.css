@@ -12,6 +12,9 @@
   --font-label: var(--font-jetbrains-mono), monospace;
 
   --animate-hero-gradient: hero-gradient 8s ease-in-out infinite;
+  --animate-floating-beacon: floating-beacon 2.7s ease-in-out infinite;
+  --animate-floating-ring: floating-ring 2.7s ease-out infinite;
+  --animate-floating-spark: floating-spark 1.8s ease-in-out infinite;
 
   @keyframes hero-gradient {
     0%,
@@ -21,6 +24,54 @@
 
     50% {
       background-position: 100% 50%;
+    }
+  }
+
+  @keyframes floating-beacon {
+    0%,
+    100% {
+      box-shadow:
+        0 0 0 0 rgba(57, 255, 20, 0.22),
+        0 0 24px rgba(57, 255, 20, 0.22),
+        0 0 54px rgba(37, 197, 197, 0.08);
+      transform: translateY(0);
+    }
+
+    50% {
+      box-shadow:
+        0 0 0 6px rgba(57, 255, 20, 0.04),
+        0 0 32px rgba(57, 255, 20, 0.34),
+        0 0 72px rgba(37, 197, 197, 0.16);
+      transform: translateY(-1px);
+    }
+  }
+
+  @keyframes floating-ring {
+    0% {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    20% {
+      opacity: 0.35;
+    }
+
+    100% {
+      transform: scale(1.38);
+      opacity: 0;
+    }
+  }
+
+  @keyframes floating-spark {
+    0%,
+    100% {
+      opacity: 0.38;
+      transform: scale(0.92);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
     }
   }
 }
@@ -225,6 +276,131 @@ body {
    ============================================================ */
 .glow-primary {
   box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+}
+
+.floating-cta {
+  position: relative;
+  isolation: isolate;
+  animation: var(--animate-floating-beacon);
+}
+
+.floating-cta__badge {
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.26rem 0.58rem;
+  border: 1px solid rgba(57, 255, 20, 0.22);
+  border-radius: 9999px;
+  background: rgba(3, 10, 5, 0.86);
+  color: #d8ffe1;
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 0 18px rgba(57, 255, 20, 0.16);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.floating-cta__badge-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 9999px;
+  background: #39ff14;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.75);
+  animation: var(--animate-floating-spark);
+}
+
+.floating-cta::before,
+.floating-cta::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.floating-cta::before {
+  border: 1px solid rgba(57, 255, 20, 0.24);
+  opacity: 0;
+  animation: var(--animate-floating-ring);
+}
+
+.floating-cta::after {
+  inset: -18px auto auto 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(57, 255, 20, 0.9) 32%, rgba(57, 255, 20, 0) 72%);
+  box-shadow:
+    0 0 10px rgba(57, 255, 20, 0.8),
+    0 0 18px rgba(57, 255, 20, 0.4);
+  transform: translateX(-50%);
+  animation: var(--animate-floating-spark);
+}
+
+.floating-cta--whatsapp {
+  animation-duration: 2.35s;
+}
+
+.floating-cta--chat {
+  box-shadow:
+    0 0 0 1px rgba(57, 255, 20, 0.06) inset,
+    0 0 22px rgba(57, 255, 20, 0.26),
+    0 0 46px rgba(37, 197, 197, 0.14);
+}
+
+.floating-cta--chat::before {
+  border-color: rgba(37, 197, 197, 0.28);
+}
+
+.floating-cta--chat::after {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.98) 0%, rgba(37, 197, 197, 0.92) 34%, rgba(37, 197, 197, 0) 74%);
+  box-shadow:
+    0 0 10px rgba(37, 197, 197, 0.82),
+    0 0 18px rgba(37, 197, 197, 0.42);
+}
+
+.floating-cta--whatsapp::before {
+  border-color: rgba(37, 211, 102, 0.32);
+}
+
+.floating-cta--whatsapp::after {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.98) 0%, rgba(37, 211, 102, 0.92) 34%, rgba(37, 211, 102, 0) 74%);
+  box-shadow:
+    0 0 10px rgba(37, 211, 102, 0.8),
+    0 0 18px rgba(37, 211, 102, 0.45);
+}
+
+.floating-cta--whatsapp .floating-cta__badge {
+  border-color: rgba(37, 211, 102, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 0 18px rgba(37, 211, 102, 0.16);
+}
+
+.floating-cta--whatsapp .floating-cta__badge-dot {
+  background: #25d366;
+  box-shadow: 0 0 10px rgba(37, 211, 102, 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-cta,
+  .floating-cta::before,
+  .floating-cta::after,
+  .floating-cta__badge-dot {
+    animation: none;
+  }
 }
 
 /* ============================================================

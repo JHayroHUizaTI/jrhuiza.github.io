@@ -1,5 +1,5 @@
 import { ChatMessage, validateChatMessage } from '../domain/chat';
-import { CHAT_SYSTEM_PROMPT } from '../domain/systemPrompt';
+import { buildChatSystemPrompt } from '../domain/systemPrompt';
 import type { ChatCompletionPort } from '../services/openAiService';
 
 const MAX_HISTORY_MESSAGES = 12;
@@ -32,12 +32,8 @@ export class GenerateChatReplyUseCase {
     }
 
     const recent = conversation.slice(-MAX_HISTORY_MESSAGES);
-    const payload: ChatMessage[] = [
-      { content: CHAT_SYSTEM_PROMPT, role: 'system' },
-      ...recent,
-    ];
-
-    const reply = await this.chatCompletion.complete(payload);
+    const systemPrompt = await buildChatSystemPrompt();
+    const reply = await this.chatCompletion.complete(recent, systemPrompt);
 
     return { ok: true, reply };
   }

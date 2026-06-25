@@ -1,9 +1,7 @@
 'use client';
 
 import {
-  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type KeyboardEvent,
@@ -82,23 +80,21 @@ export const ChatWidget = () => {
     }
   }, [isOpen]);
 
-  const messages = useMemo<ChatMessage[]>(
-    () =>
-      history.length > 0
-        ? history
-        : [{ content: t.assistant.greeting, role: 'assistant' }],
-    [history, t.assistant.greeting],
-  );
+  const messages: ChatMessage[] =
+    history.length > 0
+      ? history
+      : [{ content: t.assistant.greeting, role: 'assistant' }];
 
-  const sendMessage = useCallback(async () => {
-    const validation = validateChatMessage(input);
+  const submitMessage = async (rawText: string) => {
+    const validation = validateChatMessage(rawText);
     if (!validation.isValid) {
       setError(validation.error ?? t.assistant.emptyMessage);
       return;
     }
 
     const userMessage: ChatMessage = { content: validation.text, role: 'user' };
-    const nextHistory = [...history, userMessage];
+    const previousHistory = history;
+    const nextHistory = [...previousHistory, userMessage];
 
     setHistory(nextHistory);
     setInput('');
@@ -110,19 +106,26 @@ export const ChatWidget = () => {
       setHistory((current) => [...current, { content: reply, role: 'assistant' }]);
     } catch {
       // Keep the user's text recoverable so they can retry.
-      setHistory(history);
+      setHistory(previousHistory);
       setInput(validation.text);
       setError(t.assistant.error);
     } finally {
       setIsLoading(false);
     }
-  }, [history, input, t.assistant.emptyMessage, t.assistant.error]);
+  };
+
+  const clearConversation = () => {
+    setHistory([]);
+    setInput('');
+    setError(null);
+    inputRef.current?.focus();
+  };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       if (!isLoading) {
-        void sendMessage();
+        void submitMessage(input);
       }
     }
   };
@@ -134,7 +137,7 @@ export const ChatWidget = () => {
         onClick={() => setIsOpen(true)}
         aria-label={t.assistant.launcherAria}
         className="
-          group fixed bottom-28 right-6 z-50
+          floating-cta floating-cta--chat group fixed bottom-28 right-6 z-50
           inline-flex size-14 items-center justify-center rounded-full
           bg-primary text-background shadow-lg glow-primary
           outline-none transition-all duration-300 ease-out
@@ -145,6 +148,10 @@ export const ChatWidget = () => {
           motion-reduce:transition-none motion-reduce:hover:scale-100
         "
       >
+        <span aria-hidden="true" className="floating-cta__badge">
+          <span className="floating-cta__badge-dot" />
+          AI chat
+        </span>
         <span
           aria-hidden="true"
           className="material-symbols-outlined text-[28px] transition-transform duration-300 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
@@ -182,23 +189,40 @@ export const ChatWidget = () => {
             </span>
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => setIsOpen(false)}
-          aria-label={t.assistant.closeAria}
-          className="
-            flex size-9 shrink-0 items-center justify-center rounded-full
-            text-on-surface/70 outline-none transition-colors duration-200
-            hover:bg-primary/10 hover:text-on-surface
-            focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-            focus-visible:ring-offset-background
-            motion-reduce:transition-none
-          "
-        >
-          <span aria-hidden="true" className="material-symbols-outlined text-[22px]">
-            close
-          </span>
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={clearConversation}
+            aria-label={t.assistant.resetAria}
+            className="
+              rounded-full px-3 py-1.5 text-[11px] font-medium text-primary
+              outline-none transition-colors duration-200
+              hover:bg-primary/10
+              focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+              focus-visible:ring-offset-background
+              motion-reduce:transition-none
+            "
+          >
+            {t.assistant.reset}
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            aria-label={t.assistant.closeAria}
+            className="
+              flex size-9 shrink-0 items-center justify-center rounded-full
+              text-on-surface/70 outline-none transition-colors duration-200
+              hover:bg-primary/10 hover:text-on-surface
+              focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+              focus-visible:ring-offset-background
+              motion-reduce:transition-none
+            "
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[22px]">
+              close
+            </span>
+          </button>
+        </div>
       </header>
 
       <div
@@ -229,6 +253,33 @@ export const ChatWidget = () => {
           </div>
         ))}
 
+        {history.length === 0 && (
+          <div className="flex flex-col gap-3">
+            <p className="text-xs text-on-surface/60">{t.assistant.hint}</p>
+            <div className="flex flex-wrap gap-2">
+              {t.assistant.suggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => void submitMessage(suggestion)}
+                  className="
+                    rounded-full border border-primary/15 bg-primary/5 px-3 py-2 text-left
+                    text-xs text-on-surface transition-colors duration-200
+                    hover:border-primary/30 hover:bg-primary/10
+                    focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+                    focus-visible:ring-offset-background
+                    disabled:cursor-not-allowed disabled:opacity-50
+                    motion-reduce:transition-none
+                  "
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {isLoading && (
           <div className="flex justify-start">
             <p
@@ -257,7 +308,7 @@ export const ChatWidget = () => {
         onSubmit={(event) => {
           event.preventDefault();
           if (!isLoading) {
-            void sendMessage();
+            void submitMessage(input);
           }
         }}
         className="flex items-end gap-2 border-t border-primary/10 px-3 py-3"
@@ -297,6 +348,7 @@ export const ChatWidget = () => {
             motion-reduce:transition-none
           "
         >
+          <span className="sr-only">{t.assistant.send}</span>
           <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
             send
           </span>
