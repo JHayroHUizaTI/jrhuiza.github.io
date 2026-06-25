@@ -18,8 +18,9 @@ export const WhatsAppButton = ({
       rel="noopener noreferrer"
       aria-label={ariaLabel}
       className="
-        floating-cta floating-cta--whatsapp group fixed bottom-6 right-6 z-50
-        inline-flex max-w-[calc(100vw-3rem)] items-center gap-3 rounded-full
+        floating-cta floating-cta--whatsapp group fixed right-4 z-[80] sm:right-6
+        bottom-[var(--fab-wa-bottom)]
+        inline-flex max-w-[calc(100vw-2rem)] items-center gap-3 rounded-full sm:max-w-[calc(100vw-3rem)]
         bg-[#25D366] px-5 py-3 text-white shadow-lg shadow-green-500/30
         outline-none transition-all duration-300 ease-out
         hover:scale-105 hover:bg-[#1EBE5D] hover:shadow-xl hover:shadow-green-500/40

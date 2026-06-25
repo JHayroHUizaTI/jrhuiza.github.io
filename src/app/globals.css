@@ -78,6 +78,20 @@
 
 :root {
   color-scheme: dark;
+
+  /* ---- Floating action button (FAB) stack ----------------------------
+     Single source of truth for the bottom-right widget column so the
+     WhatsApp button, the chat launcher and the chat panel stay aligned
+     and never overlap (boxes *or* glows), with iOS safe-area support.
+     Tune the stack here, not in the components. */
+  --fab-safe: env(safe-area-inset-bottom, 0px); /* iOS home-indicator inset */
+  --fab-edge-bottom: 1rem;       /* base gap above the bottom edge */
+  --fab-wa-footprint: 5rem;      /* WhatsApp pill height incl. its top badge + spark */
+  --fab-stack-gap: 1.5rem;       /* clear gap between WhatsApp and the chat launcher */
+  --fab-wa-bottom: calc(var(--fab-safe) + var(--fab-edge-bottom));
+  --fab-chat-bottom: calc(
+    var(--fab-wa-bottom) + var(--fab-wa-footprint) + var(--fab-stack-gap)
+  );
 }
 
 html {
@@ -279,7 +293,10 @@ body {
 }
 
 .floating-cta {
-  position: relative;
+  /* No `position` here: this class is unlayered, so it would override the
+     Tailwind `fixed` utility (layered) and unpin the button from the corner.
+     The `fixed` utility already provides the positioning context the badge
+     and ::before/::after need. */
   isolation: isolate;
   animation: var(--animate-floating-beacon);
 }

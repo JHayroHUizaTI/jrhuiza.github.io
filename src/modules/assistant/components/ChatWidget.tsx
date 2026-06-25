@@ -137,8 +137,10 @@ export const ChatWidget = () => {
         onClick={() => setIsOpen(true)}
         aria-label={t.assistant.launcherAria}
         className="
-          floating-cta floating-cta--chat group fixed bottom-28 right-6 z-50
-          inline-flex size-14 items-center justify-center rounded-full
+          floating-cta floating-cta--chat group fixed right-4 z-[80] sm:right-6
+          bottom-[var(--fab-chat-bottom)]
+          inline-flex h-14 w-14 items-center justify-center rounded-full
+          sm:h-auto sm:w-auto sm:max-w-[calc(100vw-2rem)] sm:justify-start sm:gap-3 sm:px-4 sm:py-3
           bg-primary text-background shadow-lg glow-primary
           outline-none transition-all duration-300 ease-out
           hover:scale-105 hover:shadow-xl
@@ -154,9 +156,15 @@ export const ChatWidget = () => {
         </span>
         <span
           aria-hidden="true"
-          className="material-symbols-outlined text-[28px] transition-transform duration-300 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          className="material-symbols-outlined text-[26px] transition-transform duration-300 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         >
           forum
+        </span>
+        <span className="hidden min-w-0 flex-col text-left sm:flex">
+          <span className="truncate text-sm font-bold leading-tight">Chatbot</span>
+          <span className="truncate text-[11px] font-medium leading-tight text-background/75">
+            Asistente virtual
+          </span>
         </span>
       </button>
     );
@@ -166,9 +174,10 @@ export const ChatWidget = () => {
     <section
       aria-label={t.assistant.title}
       className="
-        glass-panel fixed bottom-28 right-6 z-50 flex flex-col
-        w-[calc(100vw-3rem)] max-w-[380px]
-        h-[min(70dvh,560px)] max-h-[calc(100dvh-7.5rem)]
+        glass-panel fixed right-4 z-[80] flex flex-col sm:right-6
+        bottom-[var(--fab-chat-bottom)]
+        w-[calc(100vw-2rem)] max-w-[380px] sm:w-[calc(100vw-3rem)]
+        h-[min(70dvh,560px)] max-h-[calc(100dvh_-_var(--fab-chat-bottom)_-_1rem)]
         overflow-hidden glow-primary
       "
     >
